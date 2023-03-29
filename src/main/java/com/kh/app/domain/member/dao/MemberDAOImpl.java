@@ -21,6 +21,7 @@ import java.util.Optional;
 @Repository //어플리케이션을 구동할 때 DAO라고 알려줌
 @RequiredArgsConstructor //파이널인 멤버필드의 생성자를 만든다.
 public class MemberDAOImpl implements MemberDAO{
+  //파라미터를 ? 가 아닌 이름으로 연결하는 NamedParameterJdbcTemplate
   private final NamedParameterJdbcTemplate template;
 
 //  public MemberDAOImpl(NamedParameterJdbcTemplate template) {
@@ -31,20 +32,30 @@ public class MemberDAOImpl implements MemberDAO{
    * @param member
    * @return
    */
+  // controller에서 입력한 값이 member를 통해서 전달된다.
+  // member는 dto(data transfer object)
   @Override
   public Member save(Member member) {
+    //가변객체
     StringBuffer sql = new StringBuffer();
+    //마지막 따옴표 앞 띄워주기 + 쿼리 끝 세미콜론 삭제
     sql.append("INSERT INTO member ( member_id, email, passwd, nickname, gender, hobby, region ) ");
     sql.append("VALUES ( MEMBER_MEMBER_ID_SEQ.nextval, :email, :passwd, :nickname, :gender, :hobby, :region ) ");
+    //인터페이스 SqlParameterSource의 구현 BeanPropertySqlParameterSource
+    //Bean...: 스프링에 의하여 생성되고 관리되는 자바 객체 bean(getter,setter/생성자), 자바 빈 규약을 따르는 클래스 제어의 역전(IOC),
+    // dto 객체(Member)를 넘겨주면 자동으로 자바 객체 bean에 바인딩한다.
+    //SqlParameter...: sql에 들어갈 parameter map객체를 처리하는 인터페이스
     SqlParameterSource param = new BeanPropertySqlParameterSource(member);
     //pk가 시퀀스를 통해서 만들어 지면 값이 존재하지 않기 때문에
     // keyholder라는 걸 통해서 값을  얻어낸다.
     KeyHolder keyHolder = new GeneratedKeyHolder(); // insert된 레코드에서 컬럼값 추출
     //4번째 값이 키 이름, 인서트된 값을 3번째 키홀더가 가지고 있음.
+    //1. sql문자열, 2. map like 객체(키,값) 3. 키 값, 4. 칼럼 이름
     template.update(sql.toString(), param, keyHolder, new String[]{"member_id"});
 
+    // 아이디 추출, keyholder로 부터 가져온 키 값으로부터
     long memberId = keyHolder.getKey().longValue();
-
+    // 키 값이 없던 member에 키값을 설정
     member.setMemberId(memberId);
     return member;
   }
@@ -63,6 +74,9 @@ public class MemberDAOImpl implements MemberDAO{
     sql.append(" where member_id = ? ");
     sql.append(" where email = ? ");
 
+    //mapSqlParameterSource는 addValue를 사용할 수 있다.
+    //update에서 반영하는 dto(member)는 id를 들고 올 수가 없다.
+    //id를 반영할 수가 없기 때문에 param에 id를 넣기 위해서 MapSql...를 사용
     SqlParameterSource param = new MapSqlParameterSource()
         .addValue("nickname",member.getNickname())
         .addValue("gender",member.getGender())
