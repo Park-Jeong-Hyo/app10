@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns: th="https://www.thymeleaf.org" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입</title>
+</head>
+<body>
+  <h3>회원가입</h3>
+  <hr>
+  <!--action에는 요청 url이 들어간다.-->
+  <!--*{} 객체의 맴버에 접근-->
+  <form action="/members/add" method="post" th:object="${joinForm}">
+    <!--타임리프의 내장객체가 사용됨#어쩌구..-->
+    <!--div의 th:if가 참일때만 생성된다.-->
+    <div th:if="${#fields.hasGlobalErrors()}">
+      <!--eaCH 반복문 err은 컬렉션? 변수, 에러 갯수만큼 반복이 된다.-->
+      <p th:each="err:${#fields.globalErrors()}" th:text="${err}"></p>
+    </div>
+    <div>
+      <input type="text" name="email" placeholder="아이디" th:field="*{email}">
+      <span th:errors="*{email}"></span>
+    </div>
+    <div>
+      <input type="text" name="passwd" placeholder="비밀번호" th:field="*{passwd}">
+      <span th:errors="*{passwd}"></span>
+    </div>
+    <div>
+      <input type="text" name="passchk"placeholder="비밀번호확인">
+      <span th:errors="*{passchk}"></span>
+    </div>
+    <div>
+      <input type="text" name="nickname" placeholder="별칭" th:field="*{nickname}">
+      <span th:errors="*{nickname}"></span>
+    </div>
+    <div><label for="">성별</label></div>
+    <div>
+      <div><label for="">남</label><input type="radio" name="gender" value="남자" th:field="*{gender}"></div>
+      <div><label for="">여</label><input type="radio" name="gender" value="여자" th:field="*{gender}"></div>
+    </div>
+    <div><label for="">취미</label></div>
+    <div>
+      <th:block th:each="hobby: ${hobbies}">
+        <label for="" th:for="${#ids.next('hobby')}" th:text="${hobby.decode}">독서</label>
+        <input type="checkbox" name="hobby" value="독서" th:field="*{hobby}" th:value="${hobby.code}">
+      </th:block>
+<!--      <label for="">독서</label><input type="checkbox" name="hobby" value="독서">-->
+<!--      <label for="">등산</label><input type="checkbox" name="hobby" value="수영">-->
+<!--      <label for="">골프</label><input type="checkbox" name="hobby" value="등산">-->
+<!--      <label for="">수영</label><input type="checkbox" name="hobby" value="골프">-->
+    </div>
+    <div><label for="">지역</label></div>
+    <div>
+      <select name="region" id="" th:field="*{region}">
+        <option value="">선택</option>
+        <!--변수이름 code 변수값 codes, codes는 리스트, each는 반복, codes의 값 만큼 반복하겠다는 뜻-->
+        <!--codes는 code, decode라는 필드를 가지고 있다.-->
+        <th:block th:each="regions : ${regions}">
+          <option value="" th:value="${regions.code}" th:text="${regions.decode}"></option>
+        </th:block>
+<!--        <option value="울산">울산</option>-->
+<!--        <option value="부산">부산</option>-->
+<!--        <option value="대구">대구</option>-->
+<!--        <option value="서울">서울</option>-->
+      </select>
+    </div>
+    <div><button th:text="#{button.join}">가입</button></div>
+  </form>
+</body>
+</html>

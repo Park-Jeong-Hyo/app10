@@ -1,17 +1,12 @@
-package com.kh.app.domain.member.dao;
-
+package com.kh.app.domain.member.svc;
 
 import com.kh.app.domain.entity.Member;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface MemberDAO {
-  /**
-   * 가입
-   * @param member
-   * @return
-   */
+public interface MemberSVC {
+  //가입
   Member save(Member member);
 
   //수정
