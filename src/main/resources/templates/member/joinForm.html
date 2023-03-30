@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns: th="https://www.thymeleaf.org" xmlns:th="http://www.w3.org/1999/xhtml">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>회원가입</title>
 </head>
+
 <body>
   <h3>회원가입</h3>
   <hr>
@@ -20,14 +22,17 @@
     </div>
     <div>
       <input type="text" name="email" placeholder="아이디" th:field="*{email}">
+      <span class="error"></span>
       <span th:errors="*{email}"></span>
     </div>
     <div>
       <input type="text" name="passwd" placeholder="비밀번호" th:field="*{passwd}">
+      <span class="error"></span>
       <span th:errors="*{passwd}"></span>
     </div>
     <div>
-      <input type="text" name="passchk"placeholder="비밀번호확인">
+      <input type="text" name="passchk" placeholder="비밀번호확인">
+      <span class="error"></span>
       <span th:errors="*{passchk}"></span>
     </div>
     <div>
@@ -45,10 +50,10 @@
         <label for="" th:for="${#ids.next('hobby')}" th:text="${hobby.decode}">독서</label>
         <input type="checkbox" name="hobby" value="독서" th:field="*{hobby}" th:value="${hobby.code}">
       </th:block>
-<!--      <label for="">독서</label><input type="checkbox" name="hobby" value="독서">-->
-<!--      <label for="">등산</label><input type="checkbox" name="hobby" value="수영">-->
-<!--      <label for="">골프</label><input type="checkbox" name="hobby" value="등산">-->
-<!--      <label for="">수영</label><input type="checkbox" name="hobby" value="골프">-->
+      <!--      <label for="">독서</label><input type="checkbox" name="hobby" value="독서">-->
+      <!--      <label for="">등산</label><input type="checkbox" name="hobby" value="수영">-->
+      <!--      <label for="">골프</label><input type="checkbox" name="hobby" value="등산">-->
+      <!--      <label for="">수영</label><input type="checkbox" name="hobby" value="골프">-->
     </div>
     <div><label for="">지역</label></div>
     <div>
@@ -59,13 +64,44 @@
         <th:block th:each="regions : ${regions}">
           <option value="" th:value="${regions.code}" th:text="${regions.decode}"></option>
         </th:block>
-<!--        <option value="울산">울산</option>-->
-<!--        <option value="부산">부산</option>-->
-<!--        <option value="대구">대구</option>-->
-<!--        <option value="서울">서울</option>-->
+        <!--        <option value="울산">울산</option>-->
+        <!--        <option value="부산">부산</option>-->
+        <!--        <option value="대구">대구</option>-->
+        <!--        <option value="서울">서울</option>-->
       </select>
     </div>
     <div><button th:text="#{button.join}">가입</button></div>
   </form>
+  <script type="module">
+    import { ajax } from "/js/common.js";
+
+    const $email = document.querySelector('#frm input[type=email]');
+
+    const chkEmail = res => {
+      if (res.header.rtcd == "00") {
+        if (res.data) {
+          $email.nextElementSibling.textContent = '사용할 수 없는 아이디 입니다.'
+          $email.focus();
+        } else {
+          $email.nextElementSibling.textContent = '사용가능한 아이디 입니다.'
+        }
+      } else if (res.header.rtcd == '01') {
+        $email.nextElementSibling.textContent = '이메일 형식에 맞지 않습니다.'
+        $email.focus();
+      }
+    }
+
+    const chkEmail_h = e => {
+      console.log('blur');
+      const url = `https://localhost:9080/api/members/email?email=${email.value}`
+      ajax.get(url)
+        .then(res => res.json())
+        .then(chkEmail) // res=>chkEmail(res)
+        .catch(err => console.err); // err=> console.error(err)
+    }
+
+    $email.addEventListener("blur", chkEmail_h, false);
+  </script>
 </body>
+
 </html>
