@@ -1,12 +1,16 @@
 package com.kh.app.domain.member.dao;
 
 import com.kh.app.domain.entity.Member;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Optional;
+
+@Slf4j
 @SpringBootTest //스프링부트환경을 가지고 테스트를 하겠다는 어노테이션
 class MemberDAOImplTest {
 
@@ -33,5 +37,13 @@ class MemberDAOImplTest {
     Assertions.assertThat(savedMember.getGender()).isEqualTo("남자");
     Assertions.assertThat(savedMember.getHobby()).isEqualTo("농구");
     Assertions.assertThat(savedMember.getRegion()).isEqualTo("울산");
+  }
+
+  @Test
+  @DisplayName("로그인")
+      void login() {
+    Optional<Member> member = memberDAO.login("test@kh.com", "1234");
+  log.info("member{}", member);
+  Assertions.assertThat(member.isPresent());
   }
 }

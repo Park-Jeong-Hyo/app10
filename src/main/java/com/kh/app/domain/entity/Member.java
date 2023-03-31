@@ -17,6 +17,7 @@ public class Member {
   private String gender;
   private String hobby;
   private String region;
+  private String gubun;
   private byte[] pic;
   private LocalDateTime cmate;
   private LocalDateTime umate;

@@ -10,7 +10,8 @@
 <div id="wrap">
   <h3>로그인</h3>
   <hr>
-  <form action="" th:action="@{/login}" th:method="post" th:object="${loginForm}">
+  <!--action의 값이 동적(로그인 인터셉터 설정때문에)-->
+  <form action="" th:method="post" th:object="${loginForm}">
     <div th:if="${#fields.hasGlobalErrors()}">
       <p th:each="err:${#fields.globalErrors()}" th:text="${err}"></p>
     </div>
