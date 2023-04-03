@@ -120,7 +120,7 @@ public class RestProductController {
     return res;
   }
 
-  //상품목록록
+  //상품목록
   @GetMapping
   public RestResponse<Object> findAll(){
     RestResponse<Object> res = null;
